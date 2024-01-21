@@ -211,16 +211,15 @@ class Behaviour:
             candle_period = candle_recognition_result["config"]["candle_period"]
             is_hot_candle = candle_recognition_result["result"].iloc[-1]["is_hot"]
             ema_with_same_period = self._get_ema_result_with_same_period(new_result_of_pair, candle_period)
-            if ema_with_same_period is None:
+            if ema_with_same_period is None or len(ema_with_same_period) < 2:
                 is_hot_setup = False
-            if len(ema_with_same_period) < 2:
-                is_hot_setup = False
-            prev_ema = ema_with_same_period.iloc[-2]["ema"]
-            ohlc = self._get_ohlcv_with_same_period(price_info_of_pair, candle_period, previod_offset=-1)
-            if ohlc is None:
-                is_hot_setup = False
-            volumes = self._get_volumes_with_same_period(price_info_of_pair, candle_period)
-            is_hot_setup = self._is_hot_setup(prev_ema, ohlc, volumes)
+            else:
+                prev_ema = ema_with_same_period.iloc[-2]["ema"]
+                ohlc = self._get_ohlcv_with_same_period(price_info_of_pair, candle_period, previod_offset=-1)
+                if ohlc is None:
+                    is_hot_setup = False
+                volumes = self._get_volumes_with_same_period(price_info_of_pair, candle_period)
+                is_hot_setup = self._is_hot_setup(prev_ema, ohlc, volumes)
             is_hot_candle_updated = is_hot_candle and is_hot_setup
             candle_recognition_result["result"].at[
                 candle_recognition_result["result"].index[-1], "is_hot"
