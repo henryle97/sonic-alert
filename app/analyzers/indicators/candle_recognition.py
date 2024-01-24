@@ -121,9 +121,9 @@ class Candle_recognition(IndicatorUtils):
                 skip_latest_candle=skip_latest_candle,
             ):
                 if notification == "hot":
-                    candles_values["is_hot"].iloc[-1] = True
+                    candles_values.loc[-1, "is_hot"] = True
                 elif notification == "cold":
-                    candles_values["is_cold"].iloc[-1] = True
+                    candles_values.loc[-1, "is_cold"] = True
 
         for candle in signal:
             candles_values[candle] = candles_values[candle].astype(float)
